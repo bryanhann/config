@@ -1,0 +1,19 @@
+usage () {
+cat <<DOC
+USAGE
+
+        $(basename $0) NAME PASSWORD
+
+DESCRIPTION
+
+        1. userdel NAME
+	2. useradd NAME  --groups root,audio --create-home
+        3. change password accordingly.
+
+DOC
+}
+
+[ "$2" == "" ] && { usage; exit; }
+sudo userdel $1
+echo ${1}:${2} | sudo chpasswd
+sudo useradd $1 --groups root,audio --create-home
