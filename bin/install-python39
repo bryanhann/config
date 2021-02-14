@@ -1,0 +1,8 @@
+sudo apt-get update 
+# On pi, the python3.9 installer will beef about postgresql if not >=96
+sudo apt install postgresql-96
+sudo apt install postgresql-client-96
+# pg_upgradecluster
+
+
+sudo apt install python3.9
