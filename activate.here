@@ -1,0 +1,4 @@
+echo $0 
+[ -f ./activate.here ] && {
+    export PATH=$PWD/bin:$PATH
+}

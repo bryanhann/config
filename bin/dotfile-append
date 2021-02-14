@@ -1,0 +1,62 @@
+usage () {
+cat <<DOC
+USAGE
+
+        $(basename $1) FILE LINE
+
+DESCRIPTION
+
+        Append LINE to FILE.
+
+        Typically used to ensure that a sourced dotfile ends by sourcing
+        another dotfile, as in
+
+        $(basename $1) ~/.profile "source ~/foo/.profile"
+
+        The appended LINE is itself augmented by a comment with a magic string, 
+        and before appending the given LINE all lines containing that magic string
+        are stripped from the given FILE.
+
+INTENDED USE-CASE
+
+	Reliably having a dotfile end by sourcing either "foo/bar" (say) or "zot/yak" (say)
+        depending on the needs of the moment.
+
+EXAMPLE
+
+        $ cat path/to/file
+	        line1
+	        line2
+        $ $(basename $1) path/to/file "source foo/bar"
+        $ cat path/to/file
+	        line1
+	        line2
+	        source foo/bar
+        $ echo line3 >> path/to/file
+        $ cat path/to/file
+	        line1
+	        line2
+	        source foo/bar # <MAGIC>
+	        line3
+        $ $(basename $1) path/to/file "source zot/yak"
+        $ cat path/to/file
+	        line1
+	        line2
+	        line3
+	        source zot/yak # <MAGIC>
+DOC
+}
+
+[ -f "$1" ] || { usage $0; exit; }
+magic=iiulrshvluzdr873
+tmpfile=/tmp/$RANDOM.$RANDOM.$RANDOM
+dotfile=$1
+line="$2 ## ${magic}"
+
+# strip magic from the target file
+cat ${dotfile} | grep -v ${magic} > ${tmpfile}
+mv ${tmpfile} ${dotfile}
+
+# append line to the target file
+echo "$line" >> ${dotfile}
+
